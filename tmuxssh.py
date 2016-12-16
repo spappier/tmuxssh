@@ -17,7 +17,7 @@ class TmuxSession(object):
 
     def __init__(self, session_name):
         self._session_name = session_name
-        subprocess.call(['tmux', 'new-session', '-ds', self._session_name])
+        self.tmux('new-session', '-ds', self._session_name)
 
     def __enter__(self):
         return self
@@ -25,25 +25,26 @@ class TmuxSession(object):
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.kill_session()
 
+    def tmux(self, *args):
+        return subprocess.call(['tmux'] + list(args))
+
     def split_window(self, command):
-        if isinstance(command, str):
-            command = [command]
-        subprocess.call(['tmux', 'split-window', '-v', '-t', self._session_name] + command)
+        self.tmux('split-window', '-t', self._session_name, command)
 
     def select_layout(self, layout):
-        subprocess.call(['tmux', 'select-layout', '-t', self._session_name, layout])
+        self.tmux('select-layout', '-t', self._session_name, layout)
 
     def attach(self):
-        subprocess.call(['tmux', 'attach', '-t', self._session_name])
+        self.tmux('attach', '-t', self._session_name)
 
     def set_window_option(self, option, value):
-        subprocess.call(['tmux', 'set-window-option', '-t', self._session_name, option, value])
+        self.tmux('set-window-option', '-t', self._session_name, option, value)
 
     def kill_pane(self, n):
-        subprocess.call(['tmux', 'kill-pane', '-t', str(n)])
+        self.tmux('kill-pane', '-t', str(n))
 
     def kill_session(self):
-        subprocess.call(['tmux', 'kill-session', '-t', self._session_name])
+        self.tmux('kill-session', '-t', self._session_name)
 
 
 def tmux_commands(commands):
