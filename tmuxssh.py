@@ -6,11 +6,9 @@ Usage:
   tmuxssh [--template=<template>] <host>...
   tmuxssh --version
   tmuxssh -h | --help
-
 '''
 
 import subprocess
-import sys
 import os
 import docopt
 
