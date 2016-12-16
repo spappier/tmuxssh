@@ -3,7 +3,7 @@
 tmuxssh
 
 Usage:
-  tmuxssh [--user=<user>] [--pem=<pem>] <host>...
+  tmuxssh [--template=<template>] <host>...
   tmuxssh --version
   tmuxssh -h | --help
 
@@ -13,17 +13,6 @@ import subprocess
 import sys
 import os
 import docopt
-
-
-def main(hosts, user=None, pem=None):
-    with TmuxSession('tmux-{}'.format(os.getpid())) as tmux:
-        for host in hosts:
-            tmux.split_window(list(compose_ssh_command(host, user, pem)))
-            tmux.select_layout('tiled')
-        tmux.kill_pane(0)
-        tmux.select_layout('tiled')
-        tmux.set_window_option('synchronize-panes', 'on')
-        tmux.attach()
 
 
 class TmuxSession(object):
@@ -59,25 +48,31 @@ class TmuxSession(object):
         subprocess.call(['tmux', 'kill-session', '-t', self._session_name])
 
 
-def compose_ssh_command(host, user=None, pem=None):
-    yield 'ssh'
-    if pem:
-        yield '-i'
-        yield pem
-    if user:
-        yield '{}@{}'.format(user, host)
+def tmux_commands(commands):
+    with TmuxSession('tmux-{}'.format(os.getpid())) as tmux:
+        for command in commands:
+            tmux.split_window(command)
+            tmux.select_layout('tiled')
+        tmux.kill_pane(0)
+        tmux.select_layout('tiled')
+        tmux.set_window_option('synchronize-panes', 'on')
+        tmux.attach()
+
+
+def ssh_command(host, template=None):
+    if template is None:
+        return 'ssh {}'.format(host)
     else:
-        yield host
+        return template.format(host)
 
 
-def get_hosts_from_pipe():
-    with sys.stdin as stdin:
-        return None if stdin.isatty() else sys.stdin.read()
+def main():
+    args = docopt.docopt(__doc__, version='1.0.0')
+    hosts = (h for host in args.get('<host>') for h in host.split())
+    template = args.get('--template')
+    commands = (ssh_command(host, template) for host in hosts)
+    tmux_commands(commands)
 
 
 if __name__ == '__main__':
-    sys.argv.append(get_hosts_from_pipe())
-    args = docopt.docopt(__doc__, version='0.0.2')
-    hosts = (h for host in args.get('<host>') for h in host.split())
-    main(hosts, user=args.get('--user'), pem=args.get('--pem'))
-
+    main()
