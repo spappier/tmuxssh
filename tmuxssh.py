@@ -57,11 +57,8 @@ def tmux_commands(commands):
         tmux.attach()
 
 
-def ssh_command(host, template=None):
-    if template is None:
-        return 'ssh {}'.format(host)
-    else:
-        return template.format(host)
+def ssh_command(host, template='ssh {}'):
+    return template.format(host)
 
 
 def main():
