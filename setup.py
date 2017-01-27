@@ -9,7 +9,7 @@ setup(
     author='Santiago Pappier',
     author_email='spappier@gmail.com',
     url='http://github.com/spappier/tmuxssh',
-    version='1.1.0',
+    version='1.1.1',
     description='ssh into several hosts at once using tmux',
     long_description=readme,
     license='MIT',
