@@ -63,11 +63,14 @@ def ssh_command(host, template='ssh {}'):
 
 
 def main():
-    args = docopt.docopt(__doc__, version='1.1.0')
-    hosts = (h for host in args.get('<host>') for h in host.split())
-    template = args.get('--template')
-    commands = (ssh_command(host, template) for host in hosts)
-    tmux_commands(commands)
+    try:
+        args = docopt.docopt(__doc__, version='1.1.0')
+        hosts = (h for host in args.get('<host>') for h in host.split())
+        template = args.get('--template')
+        commands = (ssh_command(host, template) for host in hosts)
+        tmux_commands(commands)
+    except EnvironmentError:
+        print('You need to install tmux before using this script.')
 
 
 if __name__ == '__main__':
