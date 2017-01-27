@@ -66,7 +66,7 @@ def main():
     try:
         args = docopt.docopt(__doc__, version='1.1.0')
         hosts = (h for host in args.get('<host>') for h in host.split())
-        template = args.get('--template')
+        template = args.get('--template') or 'ssh {}'
         commands = (ssh_command(host, template) for host in hosts)
         tmux_commands(commands)
     except EnvironmentError:
