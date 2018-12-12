@@ -9,7 +9,7 @@ setup(
     author='Santiago Pappier',
     author_email='spappier@gmail.com',
     url='http://github.com/spappier/tmuxssh',
-    version='1.1.1',
+    version='1.2.0',
     description='ssh into several hosts at once using tmux',
     long_description=readme,
     license='MIT',
@@ -25,5 +25,7 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
     ]
 )
