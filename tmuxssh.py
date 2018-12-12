@@ -1,17 +1,16 @@
-#!/usr/bin/env python
 '''
-tmuxssh
+Usage: tmuxssh [OPTIONS] [HOSTS]...
 
-Usage:
-  tmuxssh [--template=<template>] [--paginate=<per-page>] <host>...
-  tmuxssh --version
-  tmuxssh -h | --help
+Options:
+  --template TEXT     Connection template, default: ssh {}.
+  --paginate INTEGER  Panes per tmux window, default: 0.
+  --help              Show this message and exit.
 '''
 
 import subprocess
 import os
 
-import docopt
+import click
 
 
 class TmuxSession(object):
@@ -80,11 +79,16 @@ def tmux_commands(commands, per_page):
         tmux.attach()
 
 
-def main():
-    args = docopt.docopt(__doc__, version='1.2.0')
-    hosts = (h for host in args.get('<host>') for h in host.split())
-    template = args.get('--template') or 'ssh {}'
-    paginate = int(args.get('--paginate') or 0)
+@click.command()
+@click.option(
+    '--template', default='ssh {}', help='Connection template, default: ssh {}.'
+)
+@click.option(
+    '--paginate', default=0, type=click.INT, help='Panes per tmux window, default: 0.'
+)
+@click.argument('hosts', nargs=-1)
+def main(template, paginate, hosts):
+    hosts = (h for host in hosts for h in host.split())
     command = template.format
 
     try:
@@ -92,7 +96,3 @@ def main():
         tmux_commands(commands, per_page=paginate)
     except EnvironmentError:
         print('You need to install tmux.')
-
-
-if __name__ == '__main__':
-    main()

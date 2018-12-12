@@ -8,23 +8,19 @@ Installation
 
 ::
 
-    pip install tmuxssh
+    pip install --user --upgrade tmuxssh
 
 Usage
 =====
 
 ::
 
-    Usage:
-      tmuxssh [--template=<template>] [--paginate=<per-page>] <host>...
-      tmuxssh --version
-      tmuxssh -h | --help
+    Usage: tmuxssh [OPTIONS] [HOSTS]...
 
     Options:
-      --template=<template>  ssh command template
-      --paginate=<per-page>  hosts to show per tmux window
-      --version              show version
-      -h --help              show this screen
+      --template TEXT     Connection template, default: ssh {}.
+      --paginate INTEGER  Panes per tmux window, default: 0.
+      --help              Show this message and exit.
 
 Examples
 --------
