@@ -88,6 +88,10 @@ def tmux_commands(commands, per_page):
 )
 @click.argument('hosts', nargs=-1)
 def main(template, paginate, hosts):
+    if not hosts:
+        print('At least one host is required')
+        raise SystemExit(1)
+
     hosts = (h for host in hosts for h in host.split())
     command = template.format
 
@@ -95,4 +99,4 @@ def main(template, paginate, hosts):
         commands = [command(host) for host in hosts]
         tmux_commands(commands, per_page=paginate)
     except EnvironmentError:
-        print('You need to install tmux.')
+        print('You need to install tmux')
